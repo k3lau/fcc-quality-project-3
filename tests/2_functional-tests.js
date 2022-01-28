@@ -73,19 +73,32 @@ suite("Functional Tests", function () {
       }
     );
 
-    suite.skip("GET /api/books => array of books", function () {
-      test("Test GET /api/books", function (done) {
-        //done();
+    suite("GET /api/books => array of books", function () {
+      test.skip("Test GET /api/books", function (done) {
+        chai
+          .request(server)
+          .get("/api/books")
+          .end((err, res) => {
+            console.log(JSON.stringify(res));
+          });
+        done();
       });
     });
 
-    suite.skip("GET /api/books/[id] => book object with [id]", function () {
+    suite("GET /api/books/[id] => book object with [id]", function () {
       test("Test GET /api/books/[id] with id not in db", function (done) {
-        //done();
+        done();
       });
 
       test("Test GET /api/books/[id] with valid id in db", function (done) {
-        //done();
+        const testId = "61f3ee797b6c415c5181c0ac";
+        chai
+          .request(server)
+          .get("/api/books/" + testId)
+          .end((err, res) => {
+            console.log(JSON.stringify(res.body));
+          });
+        done();
       });
     });
 
