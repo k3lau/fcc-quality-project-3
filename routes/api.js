@@ -104,6 +104,8 @@ module.exports = function (app) {
         return res.send("missing required field comment");
       }
 
+      const booksList = await Books.find({});
+      console.log(JSON.stringify(booksList));
       const book = await Books.findOne({ _id: bookid });
       console.log(JSON.stringify(book));
       if (book === null) {
