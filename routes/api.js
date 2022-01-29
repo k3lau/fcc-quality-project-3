@@ -55,8 +55,14 @@ module.exports = function (app) {
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       try {
-        const book = await Books.findOne({ _id: bookid });
-        console.log(`GET book id ${JSON.stringify(book)}`);
+        const book = await Books.findOne({ _id: bookid }, (err, doc) => {});
+
+        console.log(
+          `${book} and ${typeof book} and ${book === null ? null : 1}`
+        );
+        if (book === null) {
+          return res.send("no book exists");
+        }
         let comments = [];
         if (typeof book.comments != "undefined") {
           book.comments.forEach((item) => {
@@ -73,7 +79,8 @@ module.exports = function (app) {
         console.log(`GET book id ${JSON.stringify(bookReturn)}`);
         return res.json(bookReturn);
       } catch (error) {
-        return res.json({ error: error });
+        console.log(error);
+        return res.send("no book exists");
       }
     })
 
