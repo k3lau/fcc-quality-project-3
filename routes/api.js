@@ -97,7 +97,7 @@ module.exports = function (app) {
         return res.send("no book exists");
       }
 
-      if (comment === "" || comment == undefined || comment == null) {
+      if (comment == undefined || comment == null) {
         console.log("no comment");
         return res.send("missing required field comment");
       }
@@ -118,6 +118,8 @@ module.exports = function (app) {
           comments: book.comments,
         };
         console.log(`return ${JSON.stringify(bookReturn)}`);
+        const bookDoubleCheck = await Books.findOne({ _id: book._id });
+        console.log(`return ${JSON.stringify(bookDoubleCheck)}`);
         return res.json(bookReturn);
       } catch (error) {
         console.log(`ERROR C: ${error}`);

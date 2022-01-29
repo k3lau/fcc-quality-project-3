@@ -125,11 +125,31 @@ suite("Functional Tests", function () {
         });
 
         test("Test POST /api/books/[id] without comment field", function (done) {
-          done();
+          const testTitle = "Testing Post API 2";
+          Books.create({ title: testTitle }).then((book) => {
+            const testId = book._id;
+            chai
+              .request(server)
+              .post("/api/books/" + testId)
+              .end((err, res) => {
+                assert.equal(res.text, "missing required field comment");
+                done();
+              });
+          });
         });
 
         test("Test POST /api/books/[id] with comment, id not in db", function (done) {
-          done();
+          const testTitle = "Testing Post API";
+          const comment = "Test comment";
+          const testId = "wrongid22211111222221234";
+          chai
+            .request(server)
+            .post("/api/books/" + testId)
+            .send({ comment: comment })
+            .end((err, res) => {
+              assert.equal(res.text, "no book exists");
+              done();
+            });
         });
       }
     );
