@@ -101,24 +101,27 @@ module.exports = function (app) {
         console.log("no comment");
         return res.send("missing required field comment");
       }
+      try {
+        const book = await Books.findOne({ _id: bookid });
+        console.log(JSON.stringify(book));
+        if (book === null) {
+          return res.send("no book exists");
+        }
 
-      const book = await Books.findOne({ _id: bookid });
+        book.comments.push({ text: comment });
 
-      if (book === null) {
-        return res.send("no book exists");
+        await book.save();
+
+        const bookReturn = {
+          _id: book._id,
+          title: book.title,
+          comments: book.comments,
+        };
+        console.log(`return ${JSON.stringify(bookReturn)}`);
+        return res.json(bookReturn);
+      } catch (error) {
+        console.log(`ERROR C: ${error}`);
       }
-
-      book.comments.push({ text: comment });
-
-      await book.save();
-
-      const bookReturn = {
-        _id: book._id,
-        title: book.title,
-        comments: book.comments,
-      };
-      console.log(`return ${JSON.stringify(bookReturn)}`);
-      return res.json(bookReturn);
     })
 
     .delete(async function (req, res) {
