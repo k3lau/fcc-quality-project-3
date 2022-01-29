@@ -97,7 +97,7 @@ module.exports = function (app) {
       }
 
       if (comment === "" || comment == undefined || comment == null) {
-        return res.send("missing required field");
+        return res.send("missing required field comment");
       }
 
       const book = await Books.findOne({ _id: bookid });
