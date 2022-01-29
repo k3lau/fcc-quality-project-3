@@ -123,20 +123,22 @@ module.exports = function (app) {
       return res.json(bookReturn);
     })
 
-    .delete(async function (req, res) {
-      let bookid = req.params.id;
+    .delete(function (req, res) {
+      setTimeout(async function () {
+        let bookid = req.params.id;
 
-      if (mongoose.isValidObjectId(bookid) == false) {
-        return res.send("no book exists");
-      }
+        if (mongoose.isValidObjectId(bookid) == false) {
+          return res.send("no book exists");
+        }
 
-      const book = await Books.findOne({ _id: bookid });
+        const book = await Books.findOne({ _id: bookid });
 
-      if (book === null) {
-        return res.send("no book exists");
-      }
+        if (book === null) {
+          return res.send("no book exists");
+        }
 
-      await Books.deleteOne({ _id: bookid });
-      return res.send("delete successful");
+        await Books.deleteOne({ _id: bookid });
+        return res.send("delete successful");
+      }, 1000);
     });
 };
