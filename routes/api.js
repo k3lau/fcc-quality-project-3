@@ -47,9 +47,11 @@ module.exports = function (app) {
       });
     })
 
-    .delete(async function (req, res) {
-      await Books.deleteMany({});
-      return res.send("complete delete successful");
+    .delete(function (req, res) {
+      setTimeout(async function () {
+        await Books.deleteMany({});
+        return res.send("complete delete successful");
+      }, 1000);
     });
 
   app
