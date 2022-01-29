@@ -91,12 +91,14 @@ module.exports = function (app) {
     .post(async function (req, res) {
       let bookid = req.params.id;
       let comment = req.body.comment;
-
+      console.log(`POST comment with ${bookid} and ${comment}`);
       if (mongoose.isValidObjectId(bookid) == false) {
+        console.log("no book");
         return res.send("no book exists");
       }
 
       if (comment === "" || comment == undefined || comment == null) {
+        console.log("no comment");
         return res.send("missing required field comment");
       }
 
@@ -115,7 +117,7 @@ module.exports = function (app) {
         title: book.title,
         comments: book.comments,
       };
-
+      console.log(`return ${JSON.stringify(bookReturn)}`);
       return res.json(bookReturn);
     })
 
