@@ -72,9 +72,7 @@ module.exports = function (app) {
         let comments = [];
         if (typeof book.comments != "undefined") {
           book.comments.forEach((item) => {
-            comments.push({
-              comment: item.text,
-            });
+            comments.push(item.text);
           });
         }
         const bookReturn = {
@@ -112,7 +110,7 @@ module.exports = function (app) {
         return res.send("no book exists");
       }
 
-      book.comments.push({ text: comment });
+      book.comments.push(comment);
 
       await book.save();
 
