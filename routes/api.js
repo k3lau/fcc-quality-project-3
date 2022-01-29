@@ -7,6 +7,8 @@
  */
 
 "use strict";
+const { doc } = require("mocha/lib/reporters");
+const mongoose = require("mongoose");
 const Books = require("../models/books");
 
 module.exports = function (app) {
@@ -38,15 +40,16 @@ module.exports = function (app) {
       //response will contain new book object including atleast _id and title
       Books.create({ title: title }, (err, doc) => {
         if (err) {
-          return res.text("missing required field title");
+          return res.send("missing required field title");
         } else {
           return res.json(doc);
         }
       });
     })
 
-    .delete(function (req, res) {
-      //if successful response will be 'complete delete successful'
+    .delete(async function (req, res) {
+      await Books.deleteMany({});
+      return res.send("complete delete successful");
     });
 
   app
@@ -55,11 +58,12 @@ module.exports = function (app) {
       let bookid = req.params.id;
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       try {
-        const book = await Books.findOne({ _id: bookid }, (err, doc) => {});
+        if (mongoose.isValidObjectId(bookid) == false) {
+          return res.send("no book exists");
+        }
 
-        console.log(
-          `${book} and ${typeof book} and ${book === null ? null : 1}`
-        );
+        const book = await Books.findOne({ _id: bookid });
+
         if (book === null) {
           return res.send("no book exists");
         }
@@ -76,7 +80,7 @@ module.exports = function (app) {
           title: book.title,
           comments: comments,
         };
-        console.log(`GET book id ${JSON.stringify(bookReturn)}`);
+
         return res.json(bookReturn);
       } catch (error) {
         console.log(error);
@@ -84,14 +88,51 @@ module.exports = function (app) {
       }
     })
 
-    .post(function (req, res) {
+    .post(async function (req, res) {
       let bookid = req.params.id;
       let comment = req.body.comment;
-      //json res format same as .get
+
+      if (mongoose.isValidObjectId(bookid) == false) {
+        return res.send("no book exists");
+      }
+
+      if (comment === "" || comment == undefined || comment == null) {
+        return res.send("missing required field");
+      }
+
+      const book = await Books.findOne({ _id: bookid });
+
+      if (book === null) {
+        return res.send("no book exists");
+      }
+
+      book.comments.push({ text: comment });
+
+      await book.save();
+
+      const bookReturn = {
+        _id: book._id,
+        title: book.title,
+        comments: book.comments,
+      };
+
+      return res.json(bookReturn);
     })
 
-    .delete(function (req, res) {
+    .delete(async function (req, res) {
       let bookid = req.params.id;
-      //if successful response will be 'delete successful'
+
+      if (mongoose.isValidObjectId(bookid) == false) {
+        return res.send("no book exists");
+      }
+
+      const book = await Books.findOne({ _id: bookid });
+
+      if (book === null) {
+        return res.send("no book exists");
+      }
+
+      await Books.deleteOne({ _id: bookid });
+      return res.send("delete successful");
     });
 };
