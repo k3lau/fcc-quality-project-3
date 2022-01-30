@@ -58,7 +58,7 @@ module.exports = function (app) {
     .route("/api/books/:id")
     .get(async function (req, res) {
       let bookid = req.params.id;
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
+
       try {
         if (mongoose.isValidObjectId(bookid) == false) {
           return res.send("no book exists");
@@ -83,29 +83,23 @@ module.exports = function (app) {
 
         return res.json(bookReturn);
       } catch (error) {
-        console.log(error);
-        return res.send("no book exists");
+        return res.json({ error: error });
       }
     })
 
     .post(async function (req, res) {
       let bookid = req.params.id;
       let comment = req.body.comment;
-      console.log(`POST comment with ${bookid} and ${comment}`);
       if (mongoose.isValidObjectId(bookid) == false) {
-        console.log("no book");
         return res.send("no book exists");
       }
 
       if (comment == undefined || comment == null) {
-        console.log("no comment");
         return res.send("missing required field comment");
       }
 
       const booksList = await Books.find({});
-      console.log(JSON.stringify(booksList));
       const book = await Books.findOne({ _id: bookid });
-      console.log(JSON.stringify(book));
       if (book === null) {
         return res.send("no book exists");
       }
@@ -119,9 +113,7 @@ module.exports = function (app) {
         title: book.title,
         comments: book.comments,
       };
-      console.log(`return ${JSON.stringify(bookReturn)}`);
       const bookDoubleCheck = await Books.findOne({ _id: book._id });
-      console.log(`return ${JSON.stringify(bookDoubleCheck)}`);
       return res.json(bookReturn);
     })
 
